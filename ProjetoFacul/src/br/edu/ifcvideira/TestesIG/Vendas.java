@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import br.com.timer.objects.rows.Rows;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
@@ -138,11 +141,6 @@ public class Vendas extends JFrame {
 		comboBox_3 = new JComboBox();
 		comboBox_3.setBackground(Color.LIGHT_GRAY);
 		
-		btnNewButton = new JButton("VENDER");
-		btnNewButton.setForeground(new Color(255, 255, 255));
-		btnNewButton.setBackground(new Color(153, 102, 204));
-		btnNewButton.setFont(new Font("Arial", Font.BOLD, 11));
-		
 		textField = new JTextField();
 		textField.setColumns(10);
 		
@@ -151,6 +149,71 @@ public class Vendas extends JFrame {
 		
 		textField_3 = new JTextField();
 		textField_3.setColumns(10);
+		
+		for (Material material: Estoque.materiais) {
+			comboBox.addItem(material.getTypeMaterial());
+			comboBox_1.addItem(material.getTypeMaterial());
+			comboBox_2.addItem(material.getTypeMaterial());
+			comboBox_3.addItem(material.getTypeMaterial());
+		}	
+		
+		
+		btnNewButton = new JButton("VENDER");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (!textField.getText().isBlank()) {
+					String typematerial1 = String.valueOf(comboBox.getSelectedItem());
+					int quantidade1 = Integer.parseInt(textField.getText().toString());
+					Material material1 = new Material();
+					
+					
+					material1.load(Rows.of("typeMaterial", typematerial1));
+					material1.setQuantidade(material1.getQuantidade()- quantidade1);
+					material1.save();
+				}
+				
+				if (!textField_1.getText().isBlank()) {
+				String typematerial2 = String.valueOf(comboBox_1.getSelectedItem());
+				int quantidade2 = Integer.parseInt(textField_1.getText().toString());
+				Material material2 = new Material();
+				
+				
+				material2.load(Rows.of("typeMaterial", typematerial2));
+				material2.setQuantidade(material2.getQuantidade()- quantidade2);
+				material2.save();
+				}
+				
+				if (!textField_2.getText().isBlank()) {
+				String typematerial3 = String.valueOf(comboBox_2.getSelectedItem());
+				int quantidade3 = Integer.parseInt(textField_2.getText().toString());
+				Material material3 = new Material();
+				
+				
+				material3.load(Rows.of("typeMaterial", typematerial3));
+				material3.setQuantidade(material3.getQuantidade()- quantidade3);
+				material3.save();
+				}
+				if (!textField_3.getText().isBlank()) {
+				String typematerial4 = String.valueOf(comboBox_3.getSelectedItem());
+				int quantidade4 = Integer.parseInt(textField_3.getText().toString());
+				Material material4 = new Material();
+				
+				
+				material4.load(Rows.of("typeMaterial", typematerial4));
+				material4.setQuantidade(material4.getQuantidade()- quantidade4);
+				material4.save();
+				}
+			
+				
+			}
+			}
+		);
+		btnNewButton.setForeground(new Color(255, 255, 255));
+		btnNewButton.setBackground(new Color(153, 102, 204));
+		btnNewButton.setFont(new Font("Arial", Font.BOLD, 11));
+		
+		
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -165,13 +228,13 @@ public class Vendas extends JFrame {
 								.addComponent(lblEscolhaOMaterial, GroupLayout.PREFERRED_SIZE, 303, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_panel.createSequentialGroup()
 									.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
-									.addGap(128)
+									.addPreferredGap(ComponentPlacement.RELATED)
 									.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-										.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
 										.addComponent(lblNewLabel_2, GroupLayout.PREFERRED_SIZE, 101, GroupLayout.PREFERRED_SIZE)
-										.addComponent(textField, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
 										.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
-										.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)))))
+										.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+										.addComponent(textField, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+										.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)))))
 						.addGroup(gl_panel.createSequentialGroup()
 							.addGap(79)
 							.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
@@ -182,7 +245,7 @@ public class Vendas extends JFrame {
 						.addGroup(gl_panel.createSequentialGroup()
 							.addGap(239)
 							.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(109, Short.MAX_VALUE))
+					.addContainerGap(100, Short.MAX_VALUE))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -198,11 +261,11 @@ public class Vendas extends JFrame {
 					.addGap(6)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(16)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(comboBox_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)

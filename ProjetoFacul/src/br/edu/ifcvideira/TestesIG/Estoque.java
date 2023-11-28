@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
@@ -32,8 +34,10 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import br.com.timer.objects.DataHandler;
+
 import br.com.timer.objects.builders.OrderType;
+import br.com.timer.objects.data.Data;
+import br.com.timer.objects.data.types.ListData;
 import br.com.timer.objects.rows.Rows;
 
 public class Estoque extends JFrame {
@@ -63,8 +67,8 @@ public class Estoque extends JFrame {
 			}
 		});
 	}
-	@ColumnRow
-	List<String> nomesEmEstoque = new ArrayList<>();
+	
+	public static List<Material> materiais = new ArrayList<>();
 	private JButton btnNewButton;
 	/**
 	 * Create the frame.
@@ -93,14 +97,14 @@ public class Estoque extends JFrame {
 		tableMateriais.setFont(new Font("Tahoma", Font.BOLD, 13));
 		tableMateriais.setModel(new DefaultTableModel(
 			new Object[][] {
-				{"Saco de Gesso", new Integer(0), null},
+				{null, null, null},
 			},
 			new String[] {
 				"Materiais", "Quantidade", "ID"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				Object.class, Integer.class, Object.class
+				Object.class, Integer.class, Integer.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -117,6 +121,10 @@ public class Estoque extends JFrame {
 		    String material = (String) model.getValueAt(i, 0); // 0 é o índice da coluna "Materiais"
 		    nomesMateriais.add(material);
 		}
+		model.setRowCount(0);
+		for (Material m : materiais) {
+            model.addRow(new Object[]{m.getTypeMaterial(), m.getQuantidade(), m.getId()});
+        }
 		
 		JSeparator separator = new JSeparator();
 		separator.setBounds(128, 133, 1, 2);
@@ -153,12 +161,18 @@ public class Estoque extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String novoNome = novoMaterial.getText();
                 if (!novoNome.isEmpty()) {
-                    nomesEmEstoque.add(novoNome);
-                    Collections.sort(nomesEmEstoque);
+                	Material material = new Material();
+                	material.setQuantidade(0);
+                	material.setTypeMaterial(novoNome);
+                	material.save();
+                	material.load(Rows.of("typeMaterial", novoNome));
+                	
+                    materiais.add(material);
+                    
                     DefaultTableModel model = (DefaultTableModel) tableMateriais.getModel();
                     model.setRowCount(0); // Limpa a tabela
-                    for (String nome : nomesEmEstoque) {
-                        model.addRow(new Object[]{nome, "0"});
+                    for (Material m : materiais) {
+                        model.addRow(new Object[]{m.getTypeMaterial(), m.getQuantidade(), m.getId()});
                     }
                     novoMaterial.setText("");
                 } else {
@@ -189,19 +203,21 @@ public class Estoque extends JFrame {
     }
 	
 	private void criarlista() {
-		Material material = new Material();
-		material.setTypeMaterial("Saco de Gesso");
-		material.setQuantidade(0);
-		material.save();
-		material.setTypeMaterial("Gesso Cola");
-		material.setQuantidade(0);
-		material.save();
 		
-		DataHandler data=telaprincipal.BancoDados.getHandler().fetch().from("Material").orderBy(OrderType.CESC).where(Rows.of("typeMaterial", "")).builder();
+		materiais.clear();
+		ListData data=telaprincipal.BancoDados.getHandler().list().from(Material.class).builder();
 		if (data.isNext()) {
-			data.of((key,valor)->{
-				System.out.println(key+" "+valor);
-				
+			data.of(datamap->{
+				for (Map.Entry<String, Data> dataEntry : datamap.entrySet()) {
+					System.out.println(dataEntry.getKey() + " " + dataEntry.getValue());
+					if (dataEntry.getKey().equals("id")) {
+						Material material = new Material();
+						material.setId(dataEntry.getValue().asInt());
+						material.load();
+						System.out.println(material.getTypeMaterial());
+						materiais.add(material);
+					}
+				}
 			});
 		}
 	}
